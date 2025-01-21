@@ -23,6 +23,8 @@ export class AppController {
   @Post('auth/register')
   async register(@Request() req) {
     await delay(2000);
+    const user = await this.usersService.findOne(req.body.email);
+    if (user) throw new BadRequestException('User exists.');
     return this.authService.register(req.body);
   }
 
@@ -34,7 +36,7 @@ export class AppController {
       req.body.password,
     );
     if (!user) {
-      throw new BadRequestException('');
+      throw new BadRequestException('Either email or password are wrong...');
     }
     if (user) {
       return this.authService.login({ email: user.email, userId: user.id });
